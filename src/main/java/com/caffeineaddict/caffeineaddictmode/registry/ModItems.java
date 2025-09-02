@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Coffee;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Drink;
 import java.util.List;
-import com.caffeineaddict.caffeineaddictmode.drink.Tea;
+import com.caffeineaddict.caffeineaddictmode.items.drink.Tea.Tea;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

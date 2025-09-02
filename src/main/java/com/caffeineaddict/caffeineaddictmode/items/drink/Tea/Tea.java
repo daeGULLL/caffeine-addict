@@ -1,4 +1,4 @@
-package com.caffeineaddict.caffeineaddictmode.drink;
+package com.caffeineaddict.caffeineaddictmode.items.drink.Tea;
 
 import com.caffeineaddict.caffeineaddictmode.items.drink.Drink;
 import com.caffeineaddict.caffeineaddictmode.registry.ModItems;

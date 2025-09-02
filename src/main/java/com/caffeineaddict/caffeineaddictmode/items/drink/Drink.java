@@ -30,7 +30,7 @@ public class Drink extends Item {
      *
      * @param nutrition   음식의 포만감 수치
      * @param saturation  음식의 포화도 수치
-     * @param effect      적용할 효과 (예: 이동 속도 향상 등)
+     * @param effects      적용할 효과 (예: 이동 속도 향상 등)
      * @param duration    효과 지속 시간 (초 단위)
      * @param amplifier   효과 증폭 수치
      */
