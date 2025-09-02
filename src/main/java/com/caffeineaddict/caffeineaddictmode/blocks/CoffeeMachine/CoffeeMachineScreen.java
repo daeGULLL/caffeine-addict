@@ -20,28 +20,29 @@ public class CoffeeMachineScreen extends AbstractContainerScreen<CoffeeMachineMe
 
     public CoffeeMachineScreen(CoffeeMachineMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 256;
-        this.imageHeight = 256;
+        this.imageWidth = 200;
+        this.imageHeight = 172;
         this.inventoryLabelY = 140 + 6;
     }
 
     @Override
     protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUI);
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        this.blit(poseStack, x + 40,y + 5, 0, 0, imageWidth*2/3, imageHeight*2/3);
 
         RenderSystem.setShaderTexture(0, PLAYER_INVENTORY_TEXTURE);
-        this.blit(poseStack, x + 40, y + 160, 0, 71, 162, 86);
+        this.blit(poseStack, leftPos+20, topPos+20, 0, 0, 162, 86);
+
+
+        RenderSystem.setShaderTexture(0, GUI);
+
+        this.blit(poseStack, leftPos, topPos-30, 0, 0, imageWidth, imageHeight);
 
         // Draw animated gauge bar for each input slot
         for (int i = 0; i < 2; i++) {
             int fill = menu.getProgressForSlot(i); // progress: 0-24
             int barWidth = (int)(22 * fill / 25.0); // 13 px max bar height
-            int barX = x + (i == 0 ? 85 : 143);
-            int barY = y + 43;
+            int barX = leftPos + (i == 0 ? 85 : 143);
+            int barY = topPos + 43;
             int texU = (i == 0 ? 85 : 143); // Same as barX if drawn from background directly
             int texV = 43;
             this.blit(poseStack, barX, barY,
@@ -51,7 +52,7 @@ public class CoffeeMachineScreen extends AbstractContainerScreen<CoffeeMachineMe
 
     @Override
     protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
-        this.font.draw(poseStack, title, 8, 6, 4210752);
+        this.font.draw(poseStack, this.title, 8, 2, 4210752);
         this.font.draw(poseStack, this.playerInventoryTitle, 8, imageHeight - 94, 4210752);
     }
 

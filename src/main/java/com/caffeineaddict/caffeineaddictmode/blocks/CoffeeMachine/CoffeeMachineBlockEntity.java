@@ -26,9 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvider {
-    private final Container inventory = new SimpleContainer(4);
-    private final ContainerData gauges = new SimpleContainerData(2);
+    private final Container inventory = new SimpleContainer(6);
+    private final ContainerData gauges = new SimpleContainerData(3);
     private String lastUsedBy = "";
+    private boolean extracting = false;
 
     public CoffeeMachineBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.COFFEE_MACHINE.get(), pos, state);
@@ -88,11 +89,26 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
         // 커피콩 소비
         inventory.removeItem(currentIndex, 1);
 
+        int progress = gauges.get(currentIndex);
+        int distance = Math.abs(progress - 12);
         // 에스프레소 추출
-        int devTempQ = 1;
+        int quality = 0;
+
+        if (distance<=1) {
+            quality = 5; // 최고 등급
+        } else if (distance <= 3) {
+            quality = 4;
+        } else if (distance <= 6) {
+            quality = 3;
+        } else if (distance <= 9) {
+            quality = 2;
+        } else {
+            quality = 1; // 완전 멀어지면 최저 등급
+        }
+
         ItemStack espresso = new ItemStack(ModItems.ESPRESSO.get(), 1);
         CompoundTag tag = new CompoundTag();
-        tag.putInt(TagNSpecialConstant.QUALITY.getText(), devTempQ);
+        tag.putInt(TagNSpecialConstant.QUALITY.getText(), quality);
         tag.putString(TagNSpecialConstant.BARISTA.getText(), lastUsedBy);
         espresso.setTag(tag);
         inventory.setItem(currentIndex+2, espresso);
@@ -104,14 +120,14 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
                 ItemStack input = inventory.getItem(i);
                 ItemStack output = inventory.getItem(i+2);
                 if (input.is(ModItems.GROUND_COFFEE.get()) && output.is(ModItems.SHOT_CUP.get())) {
+                    extracting = true;
                     int progress = gauges.get(i);
-                    //####################################################
-                    //여기에 게이지 움직임에 따른 커피 퀄리티 결정 로직으로 바꿔야함
-                    //####################################################
+                    // progress 값은 0~24 사이
+
                     if (progress >= 24) {
-                        brew(i);
+                        //brew(i);
                     }
-                    if (progress % 20 == 0) { // once per second
+                    if (progress % 20 == 0 && progress!=0) { // once per second
                         level.playSound(
                                 null,         // null = all nearby players hear it
                                 worldPosition,

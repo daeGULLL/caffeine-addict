@@ -13,11 +13,14 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class CoffeeMachineMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final Container blockInv;
     private final ContainerData gaugeData;
+    private final BlockPos pos;
 
     public CoffeeMachineMenu(int id, Inventory playerInv, FriendlyByteBuf data) {
         this(id, playerInv, BlockPos.of(data.readLong()), new SimpleContainer(4), new SimpleContainerData(2));
@@ -25,6 +28,7 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
 
     public CoffeeMachineMenu(int id, Inventory playerInv, BlockPos pos, Container blockInv, ContainerData gaugeData) {
         super(ModMenus.COFFEE_MACHINE_MENU.get(), id);
+        this.pos = pos;
         this.access = ContainerLevelAccess.create(playerInv.player.level, pos);
         this.blockInv = blockInv;
         this.gaugeData = gaugeData;
@@ -45,7 +49,7 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
 
         // Add player inventory slots (start at y=140 based on texture)
         int startX = 8;
-        int startY = 84;
+        int startY = 96;
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
@@ -91,11 +95,10 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
 
         return itemstack;
     }
-
+    public BlockPos getPos(){return pos;}
     public int getProgressForSlot(int slotIndex) {
         return gaugeData.get(slotIndex); // 0~24 for animation
     }
-
     @Override
     public boolean stillValid(Player player) {
         return true;
