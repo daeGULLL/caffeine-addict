@@ -23,7 +23,7 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
     private final BlockPos pos;
 
     public CoffeeMachineMenu(int id, Inventory playerInv, FriendlyByteBuf data) {
-        this(id, playerInv, BlockPos.of(data.readLong()), new SimpleContainer(4), new SimpleContainerData(2));
+        this(id, playerInv, BlockPos.of(data.readLong()), new SimpleContainer(6), new SimpleContainerData(3));
     }
 
     public CoffeeMachineMenu(int id, Inventory playerInv, BlockPos pos, Container blockInv, ContainerData gaugeData) {
@@ -36,12 +36,16 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
         // Inputs
         this.addSlot(new Slot(blockInv, 0, 50, 35));
         this.addSlot(new Slot(blockInv, 1, 104, 35));
+        this.addSlot(new Slot(blockInv, 2, 158, 35));
 
         // Outputs (read-only)
-        this.addSlot(new Slot(blockInv, 2, 50, 80) {
+        this.addSlot(new Slot(blockInv, 3, 50, 80) {
             @Override public int getMaxStackSize() {return 1;}
         });
-        this.addSlot(new Slot(blockInv, 3, 104, 80) {
+        this.addSlot(new Slot(blockInv, 4, 104, 80) {
+            @Override public int getMaxStackSize() {return 1;}
+        });
+        this.addSlot(new Slot(blockInv, 5, 158, 80) {
             @Override public int getMaxStackSize() {return 1;}
         });
 
@@ -74,14 +78,14 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
             itemstack = itemstack1.copy();
 
             // Block inventory size = 3, player = 3*9 + 9
-            if (index < 4) {
+            if (index < 6) {
                 // Move from block inventory to player
-                if (!this.moveItemStackTo(itemstack1, 4, this.slots.size(), true)) {
+                if (!this.moveItemStackTo(itemstack1, 6, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
             } else {
                 // Move from player to block inventory
-                if (!this.moveItemStackTo(itemstack1, 0, 2, false)) {
+                if (!this.moveItemStackTo(itemstack1, 0, 3, false)) {
                     return ItemStack.EMPTY;
                 }
             }

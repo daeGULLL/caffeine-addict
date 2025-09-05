@@ -1,8 +1,8 @@
 package com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine;
 
+import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Espresso;
 import com.caffeineaddict.caffeineaddictmode.registry.ModBlockEntities;
 import com.caffeineaddict.caffeineaddictmode.registry.ModItems;
-import com.caffeineaddict.caffeineaddictmode.TagNSpecialConstant;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +19,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,6 +30,7 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
     private final Container inventory = new SimpleContainer(6);
     private final ContainerData gauges = new SimpleContainerData(3);
     private String lastUsedBy = "";
+    private final String LAST_USEDBY_KEY = "LastUsedBy";
     private boolean extracting = false;
 
     public CoffeeMachineBlockEntity(BlockPos pos, BlockState state) {
@@ -59,7 +61,7 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putString(TagNSpecialConstant.LAST_USEDBY.getText(), lastUsedBy);
+        tag.putString(LAST_USEDBY_KEY, lastUsedBy);
         NonNullList<ItemStack> stacks = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             stacks.set(i, inventory.getItem(i));
@@ -70,8 +72,8 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        if (tag.contains(TagNSpecialConstant.LAST_USEDBY.getText())) {
-            lastUsedBy = tag.getString(TagNSpecialConstant.LAST_USEDBY.getText());
+        if (tag.contains(LAST_USEDBY_KEY)) {
+            lastUsedBy = tag.getString(LAST_USEDBY_KEY);
         }
         NonNullList<ItemStack> stacks = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, stacks);
@@ -107,19 +109,16 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
         }
 
         ItemStack espresso = new ItemStack(ModItems.ESPRESSO.get(), 1);
-        CompoundTag tag = new CompoundTag();
-        tag.putInt(TagNSpecialConstant.QUALITY.getText(), quality);
-        tag.putString(TagNSpecialConstant.BARISTA.getText(), lastUsedBy);
-        espresso.setTag(tag);
-        inventory.setItem(currentIndex+2, espresso);
+        Espresso.withMeta(espresso, lastUsedBy, quality);
+        inventory.setItem(currentIndex+3, espresso);
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if (!level.isClientSide) {
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 3; i++) {
                 ItemStack input = inventory.getItem(i);
-                ItemStack output = inventory.getItem(i+2);
-                if (input.is(ModItems.GROUND_COFFEE.get()) && output.is(ModItems.SHOT_CUP.get())) {
+                ItemStack output = inventory.getItem(i+3);
+                if (input.is(ModItems.GROUND_COFFEE.get()) && output.is(Items.GLASS_BOTTLE)) {
                     extracting = true;
                     int progress = gauges.get(i);
                     // progress 값은 0~24 사이

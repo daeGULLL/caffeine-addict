@@ -1,6 +1,7 @@
-package com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine;
+package com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine.network;
 
-import net.minecraft.core.BlockPos;
+import com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine.CoffeeMachineBlockEntity;
+import java.nio.charset.StandardCharsets;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -22,9 +23,12 @@ public class BrewRequestPacket {
     public static void handle(BrewRequestPacket pkt, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
+            String log = "[DEBUGG] Received brew request for slot " + pkt.idx;
+            System.out.writeBytes(log.getBytes(StandardCharsets.UTF_8));
             if (player != null && player.containerMenu instanceof com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine.CoffeeMachineMenu menu) {
                 var be = player.level.getBlockEntity(menu.getPos());
                 if (be instanceof CoffeeMachineBlockEntity machine) {
+                    System.out.writeBytes("[DEBUGG] brewing...".getBytes(StandardCharsets.UTF_8));
                     machine.brew(pkt.idx);
                 }
             }

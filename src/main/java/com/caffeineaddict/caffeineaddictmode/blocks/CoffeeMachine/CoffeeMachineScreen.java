@@ -3,6 +3,8 @@ package com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine;
 import static com.caffeineaddict.caffeineaddictmode.CaffeineAddictMode.MOD_ID;
 
 import com.caffeineaddict.caffeineaddictmode.CaffeineAddictMode;
+import com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine.network.BrewRequestPacket;
+import com.caffeineaddict.caffeineaddictmode.registry.ModNetwork;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -11,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.glfw.GLFW;
 
 @OnlyIn(Dist.CLIENT)
 public class CoffeeMachineScreen extends AbstractContainerScreen<CoffeeMachineMenu> {
@@ -38,7 +41,7 @@ public class CoffeeMachineScreen extends AbstractContainerScreen<CoffeeMachineMe
         this.blit(poseStack, leftPos, topPos-30, 0, 0, imageWidth, imageHeight);
 
         // Draw animated gauge bar for each input slot
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             int fill = menu.getProgressForSlot(i); // progress: 0-24
             int barWidth = (int)(22 * fill / 25.0); // 13 px max bar height
             int barX = leftPos + (i == 0 ? 85 : 143);
@@ -61,5 +64,33 @@ public class CoffeeMachineScreen extends AbstractContainerScreen<CoffeeMachineMe
         this.renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTick);
         this.renderTooltip(poseStack, mouseX, mouseY);
+    }
+
+    private void sendBrewRequest(int idx) {
+        ModNetwork.sendToServer(new BrewRequestPacket(idx));
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // Log pressed key for debugging
+        CaffeineAddictMode.LOGGER.info("[DEBUG] keyPressed: " + keyCode);
+
+        if (keyCode == GLFW.GLFW_KEY_1) {
+            CaffeineAddictMode.LOGGER.info("[DEBUG] Brew key 1 pressed!");
+            sendBrewRequest(0);
+            return true; // mark as handled
+        }
+        if (keyCode == GLFW.GLFW_KEY_2) {
+            CaffeineAddictMode.LOGGER.info("[DEBUG] Brew key 2 pressed!");
+            sendBrewRequest(1);
+            return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_3) {
+            CaffeineAddictMode.LOGGER.info("[DEBUG] Brew key 3 pressed!");
+            sendBrewRequest(2);
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }

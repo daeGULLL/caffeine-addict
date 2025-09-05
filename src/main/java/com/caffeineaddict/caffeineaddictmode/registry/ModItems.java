@@ -3,6 +3,7 @@ package com.caffeineaddict.caffeineaddictmode.registry;
 import static com.caffeineaddict.caffeineaddictmode.registry.ModBlocks.COFFEE_MACHINE_BLOCK;
 
 import com.caffeineaddict.caffeineaddictmode.CaffeineAddictMode;
+import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Espresso;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -85,7 +86,7 @@ public class ModItems {
      */
     public static final RegistryObject<Item> ESPRESSO = ITEMS.register(
             "espresso",
-            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Espresso(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
     );
 
     public static final RegistryObject<Item> ICE_WATER = ITEMS.register(
