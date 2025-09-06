@@ -2,6 +2,7 @@ package com.caffeineaddict.caffeineaddictmode;
 
 import com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine.CoffeeMachineScreen;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Coffee;
+import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Espresso;
 import com.caffeineaddict.caffeineaddictmode.registry.ModBlockEntities;
 import com.caffeineaddict.caffeineaddictmode.registry.ModBlocks;
 import com.caffeineaddict.caffeineaddictmode.registry.ModItems;
@@ -12,6 +13,8 @@ import com.caffeineaddict.caffeineaddictmode.blocks.Grinder.GrinderScreen;
 import com.caffeineaddict.caffeineaddictmode.blocks.IceMaker.IceMakerScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,6 +60,16 @@ public class CaffeineAddictMode {
         public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
             ItemStack crafted = event.getCrafting();
             if (crafted.getItem() instanceof Coffee) {
+                // crafting grid 안에서 Espresso 찾기
+                for (int i = 0; i < event.getInventory().getContainerSize(); i++) {
+                    ItemStack ingredient = event.getInventory().getItem(i);
+
+                    if (ingredient.getItem() instanceof Espresso && ingredient.hasTag()) {
+                        // Espresso 태그 복사 → Coffee 결과물로 상속
+                        Coffee.inheritMeta(crafted, ingredient.getTag());
+                        break;
+                    }
+                }
                 event.getEntity().addItem(new ItemStack(Items.GLASS_BOTTLE));
             }
         }

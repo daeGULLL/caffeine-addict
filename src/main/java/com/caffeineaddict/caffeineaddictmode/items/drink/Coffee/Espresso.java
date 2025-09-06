@@ -59,8 +59,13 @@ public class Espresso extends Drink {
         String creator = tag.contains(TAG_CREATOR) ? tag.getString(TAG_CREATOR) : "unknown";
         int star = tag.contains(TAG_STAR) ? tag.getInt(TAG_STAR) : 0;
 
-        tooltip.add(Component.literal("제작자: " + creator));
-        tooltip.add(Component.literal("등급: " + "★".repeat(Math.max(0, star))));
+        if(creator.equals("unknown") && star==0){
+            tooltip.add(Component.literal("???"));
+        }else{
+            tooltip.remove(Component.literal("???"));
+            tooltip.add(Component.literal("제작자: " + creator));
+            tooltip.add(Component.literal("등급: " + "★".repeat(Math.max(0, star))));
+        }
     }
 
     /**
@@ -78,6 +83,10 @@ public class Espresso extends Drink {
         tag.putString(TAG_CREATOR, creator);
         tag.putInt(TAG_STAR, star);
         return stack;
+    }
+
+    public static ItemStack inheritMeta(ItemStack stack, CompoundTag parent_tag){
+        return withMeta(stack, parent_tag.getString(TAG_CREATOR), parent_tag.getInt(TAG_STAR));
     }
 
     /**
