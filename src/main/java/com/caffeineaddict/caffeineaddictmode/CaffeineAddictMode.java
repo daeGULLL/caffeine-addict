@@ -1,6 +1,7 @@
 package com.caffeineaddict.caffeineaddictmode;
 
 import com.caffeineaddict.caffeineaddictmode.blocks.CoffeeMachine.CoffeeMachineScreen;
+import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Coffee;
 import com.caffeineaddict.caffeineaddictmode.registry.ModBlockEntities;
 import com.caffeineaddict.caffeineaddictmode.registry.ModBlocks;
 import com.caffeineaddict.caffeineaddictmode.registry.ModItems;
@@ -11,9 +12,12 @@ import com.caffeineaddict.caffeineaddictmode.blocks.Grinder.GrinderScreen;
 import com.caffeineaddict.caffeineaddictmode.blocks.IceMaker.IceMakerScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,6 +49,17 @@ public class CaffeineAddictMode {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(ModNetwork::registerPackets);
+    }
+
+    @Mod.EventBusSubscriber(modid = CaffeineAddictMode.MOD_ID)
+    public static class CraftEvents {
+        @SubscribeEvent
+        public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+            ItemStack crafted = event.getCrafting();
+            if (crafted.getItem() instanceof Coffee) {
+                event.getEntity().addItem(new ItemStack(Items.GLASS_BOTTLE));
+            }
+        }
     }
 
     @Mod.EventBusSubscriber(modid = CaffeineAddictMode.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

@@ -38,7 +38,6 @@ public class Coffee extends Espresso {
         super(nutrition, saturation, effects, duration, amplifier);
     }
 
-
     /**
      * 아이템 사용 후 호출
      * 빈 컵을 지급 (크리에이티브 모드일 경우 지급하지 않음)
