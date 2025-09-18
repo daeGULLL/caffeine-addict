@@ -27,8 +27,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvider {
-    private final Container inventory = new SimpleContainer(6);
-    private final ContainerData gauges = new SimpleContainerData(3);
+    private final int SHOT_INV_SIZE = 6;
+    private final int STEAM_INV_SIZE = 4;
+    private final Container shotInventory = new SimpleContainer(SHOT_INV_SIZE);
+    private final Container steamInventory = new SimpleContainer(STEAM_INV_SIZE);
+    private final ContainerData gauges = new SimpleContainerData((SHOT_INV_SIZE+STEAM_INV_SIZE)/2);
     private String lastUsedBy = "";
     private final String LAST_USEDBY_KEY = "LastUsedBy";
     private boolean extracting = false;
@@ -54,7 +57,7 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
     @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, Player player) {
         System.out.println("Opened GUI");
-        return new CoffeeMachineMenu(id, playerInventory, this.worldPosition, this.inventory, this.gauges);
+        return new CoffeeMachineMenu(id, playerInventory, this.worldPosition, this.shotInventory, this.steamInventory, this.gauges);
     }
 
     // Save data
@@ -62,9 +65,12 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putString(LAST_USEDBY_KEY, lastUsedBy);
-        NonNullList<ItemStack> stacks = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            stacks.set(i, inventory.getItem(i));
+        NonNullList<ItemStack> stacks = NonNullList.withSize(SHOT_INV_SIZE+STEAM_INV_SIZE, ItemStack.EMPTY);
+        for (int i = 0; i < SHOT_INV_SIZE; i++) {
+            stacks.set(i, shotInventory.getItem(i));
+        }
+        for (int j = 0; j < STEAM_INV_SIZE; j++) {
+            stacks.set(j+SHOT_INV_SIZE, steamInventory.getItem(j));
         }
         ContainerHelper.saveAllItems(tag, stacks);
     }
@@ -75,10 +81,14 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
         if (tag.contains(LAST_USEDBY_KEY)) {
             lastUsedBy = tag.getString(LAST_USEDBY_KEY);
         }
-        NonNullList<ItemStack> stacks = NonNullList.withSize(inventory.getContainerSize(), ItemStack.EMPTY);
+        NonNullList<ItemStack> stacks = NonNullList.withSize(SHOT_INV_SIZE+STEAM_INV_SIZE, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, stacks);
-        for (int i = 0; i < stacks.size(); i++) {
-            inventory.setItem(i, stacks.get(i));
+
+        for (int i = 0; i < SHOT_INV_SIZE; i++) {
+            shotInventory.setItem(i, stacks.get(i));
+        }
+        for (int j = 0; j<STEAM_INV_SIZE; j++){
+            steamInventory.setItem(j, stacks.get(j+SHOT_INV_SIZE));
         }
     }
 
@@ -88,8 +98,11 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
     }
 
     public void brew(int currentIndex){
+        if(currentIndex>=SHOT_INV_SIZE){
+            throw new RuntimeException("커피머신 슬롯 개수를 넘어갈 수 없습니다");
+        }
         // 커피콩 소비
-        inventory.removeItem(currentIndex, 1);
+        shotInventory.removeItem(currentIndex, 1);
 
         int progress = gauges.get(currentIndex);
         int distance = Math.abs(progress - 12);
@@ -110,43 +123,67 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
 
         ItemStack espresso = new ItemStack(ModItems.ESPRESSO.get(), 1);
         Espresso.withMeta(espresso, lastUsedBy, quality);
-        inventory.setItem(currentIndex+3, espresso);
+        shotInventory.setItem(currentIndex+3, espresso);
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (!level.isClientSide) {
-            for (int i = 0; i < 3; i++) {
-                ItemStack input = inventory.getItem(i);
-                ItemStack output = inventory.getItem(i+3);
-                if (input.is(ModItems.GROUND_COFFEE.get()) && output.is(Items.GLASS_BOTTLE)) {
-                    extracting = true;
-                    int progress = gauges.get(i);
-                    // progress 값은 0~24 사이
+        if (level.isClientSide) return;
 
-                    if (progress >= 24) {
-                        //brew(i);
-                    }
-                    if (progress % 20 == 0 && progress!=0) { // once per second
-                        level.playSound(
-                                null,         // null = all nearby players hear it
-                                worldPosition,
-                                SoundEvents.BREWING_STAND_BREW, // or your custom sound
-                                SoundSource.BLOCKS,
-                                1.0f,         // volume
-                                1.0f          // pitch
-                        );
-                    }
-                    progress = (progress + 1) % 25;
-                    gauges.set(i, progress);
-                } else {
-                    gauges.set(i, 0); // reset if no item
-                }
+        processShotInventory(level);
+        processSteamInventory(level);
+
+        setChanged();
+    }
+
+    private void processShotInventory(Level level) {
+        for (int i = 0; i < SHOT_INV_SIZE / 2; i++) {
+            ItemStack input = shotInventory.getItem(i);
+            ItemStack output = shotInventory.getItem(i + (SHOT_INV_SIZE / 2));
+
+            if (input.is(ModItems.GROUND_COFFEE.get()) && output.is(ModItems.SHOT_CUP.get())) {
+                handleProgress(level, i, gauges.get(i), () -> {
+                    // 진행 중: 1초마다 사운드 재생
+                    level.playSound(null, worldPosition, SoundEvents.BREWING_STAND_BREW,
+                            SoundSource.BLOCKS, 1.0f, 1.0f);
+                });
+            } else {
+                gauges.set(i, 0);
             }
-            setChanged();
         }
     }
 
-    public Container getInventory() {
-        return inventory;
+    private void processSteamInventory(Level level) {
+        for (int j = 0; j < STEAM_INV_SIZE / 2; j++) {
+            ItemStack input = steamInventory.getItem(j);
+            ItemStack output = steamInventory.getItem(j + (STEAM_INV_SIZE / 2));
+            int gaugeIndex = j + (SHOT_INV_SIZE / 2);
+
+            if (input.is(Items.MILK_BUCKET) &&
+                    (output.is(ItemStack.EMPTY.getItem()) || output.is(ModItems.STEAMED_MILK.get()))) {
+
+                handleProgress(level, gaugeIndex, gauges.get(gaugeIndex), () -> {
+                    // 여기서 사운드 재생 가능
+                });
+
+                if (gauges.get(gaugeIndex) >= 24) {
+                    steamInventory.removeItem(j, 1);
+                    //bucket을 내보내지 않으면
+                    //steamInventory.setItem(j, new ItemStack(Items.BUCKET, 1));
+                    steamInventory.setItem(j + (STEAM_INV_SIZE / 2), new ItemStack(ModItems.STEAMED_MILK.get(), 1));
+                }
+            }
+        }
+    }
+
+    /**
+     * 공통 게이지 진행 처리
+     */
+    private void handleProgress(Level level, int index, int currentProgress, Runnable onTickSound) {
+        int newProgress = (currentProgress + 1) % 25;
+        gauges.set(index, newProgress);
+
+        if (newProgress % 20 == 0 && newProgress != 0) {
+            onTickSound.run();
+        }
     }
 }

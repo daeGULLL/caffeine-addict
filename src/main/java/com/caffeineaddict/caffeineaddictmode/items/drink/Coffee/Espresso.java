@@ -1,6 +1,8 @@
 package com.caffeineaddict.caffeineaddictmode.items.drink.Coffee;
 
 import com.caffeineaddict.caffeineaddictmode.items.drink.Drink;
+import com.caffeineaddict.caffeineaddictmode.items.drink.DrinkState;
+import com.caffeineaddict.caffeineaddictmode.registry.ModItems;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
@@ -47,8 +49,8 @@ public class Espresso extends Drink {
      * @param duration    효과 지속 시간 (초)
      * @param amplifier   기본 증폭 수치
      */
-    public Espresso(int nutrition, float saturation, List<MobEffect> effects, int duration, int amplifier) {
-        super(nutrition, saturation, effects, duration, amplifier);
+    public Espresso(int nutrition, float saturation, List<MobEffect> effects, int duration, int amplifier, DrinkState drinkState) {
+        super(nutrition, saturation, effects, duration, amplifier, drinkState);
     }
 
     @Override
@@ -100,7 +102,7 @@ public class Espresso extends Drink {
             createEffectInstances(stack).forEach(entity::addEffect);
 
             if (entity instanceof Player player && !player.getAbilities().instabuild) {
-                ItemStack drop = new ItemStack(Items.GLASS_BOTTLE);
+                ItemStack drop = new ItemStack(ModItems.SHOT_CUP.get());
                 if (!player.getInventory().add(drop)) {
                     player.drop(drop, false);
                 }

@@ -70,7 +70,7 @@ public class CaffeineAddictMode {
                         break;
                     }
                 }
-                event.getEntity().addItem(new ItemStack(Items.GLASS_BOTTLE));
+                event.getEntity().addItem(new ItemStack(ModItems.SHOT_CUP.get()));
             }
         }
     }

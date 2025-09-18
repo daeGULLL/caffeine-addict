@@ -1,9 +1,11 @@
 package com.caffeineaddict.caffeineaddictmode.registry;
 
 import static com.caffeineaddict.caffeineaddictmode.registry.ModBlocks.COFFEE_MACHINE_BLOCK;
+import static org.lwjgl.system.linux.X11.True;
 
 import com.caffeineaddict.caffeineaddictmode.CaffeineAddictMode;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Espresso;
+import com.caffeineaddict.caffeineaddictmode.items.drink.DrinkState;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -31,10 +33,6 @@ public class ModItems {
             ITEMS.register("ground_coffee", () ->
                     new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB)));
 
-    public static final RegistryObject<Item> SHOT_CUP =
-            ITEMS.register("shot_cup", () ->
-                    new Item(new Item.Properties().stacksTo(16).tab(ModCreativeTab.CAFFEINE_TAB)));
-
     public static RegistryObject<Item> getCoffeeMachine(){
         return COFFEE_MACHINE_ITEM;
     }
@@ -56,8 +54,8 @@ public class ModItems {
             () -> new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
     );
 
-    public static final RegistryObject<Item> MILK = ITEMS.register(
-            "milk",
+    public static final RegistryObject<Item> STEAMED_MILK = ITEMS.register(
+            "steamed_milk",
             () -> new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
     );
 
@@ -81,37 +79,47 @@ public class ModItems {
             () -> new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
     );
 
+//    public static final RegistryObject<Item> MUG_CUP = ITEMS.register(
+//            "mug_cup",
+//            () -> new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
+//    );
+
+    public static final RegistryObject<Item> SHOT_CUP = ITEMS.register(
+            "shot_cup",
+            () -> new Item(new Item.Properties().stacksTo(16).tab(ModCreativeTab.CAFFEINE_TAB))
+    );
+
     /**
      * Drink
      */
     public static final RegistryObject<Item> ESPRESSO = ITEMS.register(
             "espresso",
-            () -> new Espresso(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Espresso(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.HOT)
     );
 
     public static final RegistryObject<Item> ICE_WATER = ITEMS.register(
             "ice_water",
-            () -> new Drink(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Drink(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.COLD)
     );
 
     public static final RegistryObject<Item> AMERICANO = ITEMS.register(
             "americano",
-            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.HOT)
     );
 
     public static final RegistryObject<Item> ICE_AMERICANO = ITEMS.register(
             "ice_americano",
-            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.COLD)
     );
 
     public static final RegistryObject<Item> LATTE = ITEMS.register(
             "latte",
-            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.HOT)
     );
 
     public static final RegistryObject<Item> ICE_LATTE = ITEMS.register(
             "ice_latte",
-            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0)
+            () -> new Coffee(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.COLD)
     );
 
     /**

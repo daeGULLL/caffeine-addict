@@ -41,7 +41,7 @@ public class CoffeeMachineScreen extends AbstractContainerScreen<CoffeeMachineMe
         this.blit(poseStack, leftPos, topPos-30, 0, 0, imageWidth, imageHeight);
 
         // Draw animated gauge bar for each input slot
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i < 4; i++) {
             int fill = menu.getProgressForSlot(i); // progress: 0-24
             int barWidth = (int)(22 * fill / 25.0); // 13 px max bar height
             int barX = leftPos + (i == 0 ? 85 : 143);

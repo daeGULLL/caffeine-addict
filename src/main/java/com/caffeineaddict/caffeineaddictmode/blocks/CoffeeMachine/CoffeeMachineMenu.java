@@ -17,36 +17,51 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class CoffeeMachineMenu extends AbstractContainerMenu {
+    private static final int COFFEE_MAX_STACK = 1;
+    private static final int MILK_MAX_STACK = 8;
     private final ContainerLevelAccess access;
-    private final Container blockInv;
+    private final Container shotInv;
+    private final Container steamInv;
     private final ContainerData gaugeData;
     private final BlockPos pos;
 
     public CoffeeMachineMenu(int id, Inventory playerInv, FriendlyByteBuf data) {
-        this(id, playerInv, BlockPos.of(data.readLong()), new SimpleContainer(6), new SimpleContainerData(3));
+        this(id, playerInv, BlockPos.of(data.readLong()), new SimpleContainer(6), new SimpleContainer(4), new SimpleContainerData(5));
     }
 
-    public CoffeeMachineMenu(int id, Inventory playerInv, BlockPos pos, Container blockInv, ContainerData gaugeData) {
+    public CoffeeMachineMenu(int id, Inventory playerInv, BlockPos pos, Container shotInv, Container steamInv, ContainerData gaugeData) {
         super(ModMenus.COFFEE_MACHINE_MENU.get(), id);
         this.pos = pos;
         this.access = ContainerLevelAccess.create(playerInv.player.level, pos);
-        this.blockInv = blockInv;
+        this.shotInv = shotInv;
+        this.steamInv = steamInv;
         this.gaugeData = gaugeData;
 
         // Inputs
-        this.addSlot(new Slot(blockInv, 0, 50, 35));
-        this.addSlot(new Slot(blockInv, 1, 104, 35));
-        this.addSlot(new Slot(blockInv, 2, 158, 35));
+        this.addSlot(new Slot(shotInv, 0, 104, 35));
+        this.addSlot(new Slot(shotInv, 1, 158, 35));
+        this.addSlot(new Slot(shotInv, 2, 212, 35));
 
         // Outputs (read-only)
-        this.addSlot(new Slot(blockInv, 3, 50, 80) {
-            @Override public int getMaxStackSize() {return 1;}
+        this.addSlot(new Slot(shotInv, 3, 104, 80) {
+            @Override public int getMaxStackSize() {return COFFEE_MAX_STACK;}
         });
-        this.addSlot(new Slot(blockInv, 4, 104, 80) {
-            @Override public int getMaxStackSize() {return 1;}
+        this.addSlot(new Slot(shotInv, 4, 158, 80) {
+            @Override public int getMaxStackSize() {return COFFEE_MAX_STACK;}
         });
-        this.addSlot(new Slot(blockInv, 5, 158, 80) {
-            @Override public int getMaxStackSize() {return 1;}
+        this.addSlot(new Slot(shotInv, 5, 212, 80) {
+            @Override public int getMaxStackSize() {return COFFEE_MAX_STACK;}
+        });
+
+        // Steam Inputs
+        this.addSlot(new Slot(steamInv, 0, 50, 35));
+        this.addSlot(new Slot(steamInv, 1, 266, 35));
+
+        this.addSlot(new Slot(steamInv, 2, 50, 80) {
+            @Override public int getMaxStackSize() {return MILK_MAX_STACK;}
+        });
+        this.addSlot(new Slot(steamInv, 3, 266, 80) {
+            @Override public int getMaxStackSize() {return MILK_MAX_STACK;}
         });
 
         addDataSlots(gaugeData);
@@ -78,7 +93,7 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
             itemstack = itemstack1.copy();
 
             // Block inventory size = 3, player = 3*9 + 9
-            if (index < 6) {
+            if (index < 10) {
                 // Move from block inventory to player
                 if (!this.moveItemStackTo(itemstack1, 6, this.slots.size(), true)) {
                     return ItemStack.EMPTY;

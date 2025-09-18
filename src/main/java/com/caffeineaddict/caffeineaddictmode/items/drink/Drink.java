@@ -27,7 +27,7 @@ public class Drink extends Item {
     protected final List<MobEffect> effects;
     protected int duration;     // 초 단위
     protected int amplifier;
-
+    protected DrinkState drinkState;
     /**
      * Drink 생성자
      *
@@ -37,7 +37,7 @@ public class Drink extends Item {
      * @param duration    효과 지속 시간 (초 단위)
      * @param amplifier   효과 증폭 수치
      */
-    public Drink(int nutrition, float saturation, List<MobEffect> effects, int duration, int amplifier) {
+    public Drink(int nutrition, float saturation, List<MobEffect> effects, int duration, int amplifier, DrinkState drinkState) {
         super(new Item.Properties()
                 .tab(ModCreativeTab.CAFFEINE_TAB)
                 .stacksTo(1)
@@ -49,6 +49,7 @@ public class Drink extends Item {
         this.effects = List.copyOf(effects);
         this.duration = duration;
         this.amplifier = amplifier;
+        this.drinkState = drinkState;
     }
 
     protected List<MobEffectInstance> createEffectInstances(ItemStack stack) {
@@ -68,6 +69,7 @@ public class Drink extends Item {
             createEffectInstances(stack).forEach(entity::addEffect);
 
             if (entity instanceof Player player && !player.getAbilities().instabuild) {
+                //ItemStack drop = drinkState==DrinkState.HOT? new ItemStack(ModItems.MUG_CUP.get()) : new ItemStack(ModItems.GLASS_CUP.get());
                 ItemStack drop = new ItemStack(ModItems.CUP.get());
                 if (!player.getInventory().add(drop)) {
                     player.drop(drop, false);

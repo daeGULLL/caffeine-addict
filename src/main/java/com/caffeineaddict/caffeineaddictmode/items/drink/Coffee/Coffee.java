@@ -1,5 +1,6 @@
 package com.caffeineaddict.caffeineaddictmode.items.drink.Coffee;
 
+import com.caffeineaddict.caffeineaddictmode.items.drink.DrinkState;
 import com.caffeineaddict.caffeineaddictmode.registry.ModItems;
 import java.util.List;
 import net.minecraft.world.effect.MobEffect;
@@ -33,9 +34,10 @@ public class Coffee extends Espresso {
      * @param effects     적용할 효과
      * @param duration    효과 지속 시간 (초)
      * @param amplifier   기본 증폭 수치
+     * @param drinkState  음료 온도 (찬/뜨거운)
      */
-    public Coffee(int nutrition, float saturation, List<MobEffect> effects, int duration, int amplifier) {
-        super(nutrition, saturation, effects, duration, amplifier);
+    public Coffee(int nutrition, float saturation, List<MobEffect> effects, int duration, int amplifier, DrinkState drinkState) {
+        super(nutrition, saturation, effects, duration, amplifier, drinkState);
     }
 
     /**
@@ -49,6 +51,7 @@ public class Coffee extends Espresso {
             createEffectInstances(stack).forEach(entity::addEffect);
 
             if (entity instanceof Player player && !player.getAbilities().instabuild) {
+                //ItemStack drop = drinkState==DrinkState.HOT? new ItemStack(ModItems.MUG_CUP.get()) : new ItemStack(ModItems.GLASS_CUP.get());
                 ItemStack drop = new ItemStack(ModItems.CUP.get());
                 if (!player.getInventory().add(drop)) {
                     player.drop(drop, false);
