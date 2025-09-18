@@ -13,10 +13,9 @@ import com.caffeineaddict.caffeineaddictmode.blocks.Grinder.GrinderScreen;
 import com.caffeineaddict.caffeineaddictmode.blocks.IceMaker.IceMakerScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
@@ -84,6 +83,8 @@ public class CaffeineAddictMode {
                 MenuScreens.register(ModMenus.GRINDER_MENU.get(), GrinderScreen::new);
                 MenuScreens.register(ModMenus.ICE_MAKER_MENU.get(), IceMakerScreen::new);
                 MenuScreens.register(ModMenus.COFFEE_MACHINE_MENU.get(), CoffeeMachineScreen::new);
+                ItemBlockRenderTypes.setRenderLayer(ModBlocks.WILD_COFFEE_BUSH.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(ModBlocks.COFFEE_CROP.get(), RenderType.cutout());
             });
         }
     }

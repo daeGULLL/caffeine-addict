@@ -80,13 +80,13 @@ public class GrinderBlockEntity extends BlockEntity implements MenuProvider {
         ItemStack output = entity.itemHandler.getStackInSlot(1);
 
         if (input.getItem() == ModItems.ROASTED_COFFEE_BEAN.get()) {
-            if (output.isEmpty() || (output.getItem() == ModItems.GROUND_COFFEE.get() && output.getCount() < output.getMaxStackSize())) {
+            if (output.isEmpty() || (output.getItem() == ModItems.COFFEE_POWDER.get() && output.getCount() < output.getMaxStackSize())) {
                 entity.progress++;
                 if (entity.progress >= 100) {
                     // 커피콩 소비
                     entity.itemHandler.extractItem(0, 1, false);
                     // 커피 가루 추가
-                    entity.itemHandler.insertItem(1, new ItemStack(ModItems.GROUND_COFFEE.get(), 1), false);
+                    entity.itemHandler.insertItem(1, new ItemStack(ModItems.COFFEE_POWDER.get(), 1), false);
                     entity.progress = 0;
                 }
             } else {

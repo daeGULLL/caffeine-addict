@@ -1,0 +1,20 @@
+{
+  "parent": "caffeineaddictmode:begin_of_coffee",
+  "display": {
+    "icon": { "item": "caffeineaddictmode:dried_dandelion_leaf" },
+    "title": "티스토리",
+    "description": "아무 종류의 찻잎을 만드세요",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "has_any_tea_leaf": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "tag": "caffeineaddictmode:tea_leaves" }]
+      }
+    }
+  }
+}

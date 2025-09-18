@@ -1,0 +1,20 @@
+{
+  "display": {
+    "icon": { "item": "caffeineaddictmode:coffee_bean" },
+    "title": "커피 중독의 시작",
+    "description": "커피콩을 획득하세요",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/white_concrete.png"
+  },
+  "criteria": {
+    "has_coffee_bean": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": ["caffeineaddictmode:coffee_bean"] }]
+      }
+    }
+  }
+}

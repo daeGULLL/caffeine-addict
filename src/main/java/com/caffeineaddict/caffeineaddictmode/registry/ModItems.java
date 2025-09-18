@@ -8,6 +8,7 @@ import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Espresso;
 import com.caffeineaddict.caffeineaddictmode.items.drink.DrinkState;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Coffee;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Drink;
@@ -41,7 +42,7 @@ public class ModItems {
      */
     public static final RegistryObject<Item> COFFEE_BEAN = ITEMS.register(
             "coffee_bean",
-            () -> new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
+            () -> new ItemNameBlockItem(ModBlocks.COFFEE_CROP.get(), new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
     );
 
     public static final RegistryObject<Item> ROASTED_COFFEE_BEAN = ITEMS.register(
@@ -138,6 +139,14 @@ public class ModItems {
             ITEMS.register("grinder", () ->
                     new BlockItem(ModBlocks.GRINDER_BLOCK.get(), new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
             );
+
+    public static final RegistryObject<Item> SHOT_MACHINE =
+            ITEMS.register("shot_machine", () ->
+                    new Item(new Item.Properties().stacksTo(16).tab(ModCreativeTab.CAFFEINE_TAB)));
+
+    public static final RegistryObject<Item> STEAMER =
+            ITEMS.register("steamer", () ->
+                    new Item(new Item.Properties().stacksTo(16).tab(ModCreativeTab.CAFFEINE_TAB)));
 
     public static final RegistryObject<Item> ICE_MAKER =
             ITEMS.register("ice_maker", () ->
