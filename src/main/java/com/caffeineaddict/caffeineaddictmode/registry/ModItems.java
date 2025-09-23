@@ -6,6 +6,7 @@ import static org.lwjgl.system.linux.X11.True;
 import com.caffeineaddict.caffeineaddictmode.CaffeineAddictMode;
 import com.caffeineaddict.caffeineaddictmode.items.drink.Coffee.Espresso;
 import com.caffeineaddict.caffeineaddictmode.items.drink.DrinkState;
+import com.caffeineaddict.caffeineaddictmode.items.drink.SteamedMilk;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
@@ -30,10 +31,6 @@ public class ModItems {
             ModItems.ITEMS.register("coffee_machine", () ->
                     new BlockItem(COFFEE_MACHINE_BLOCK.get(), new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB)));
 
-    public static final RegistryObject<Item> GROUND_COFFEE =
-            ITEMS.register("ground_coffee", () ->
-                    new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB)));
-
     public static RegistryObject<Item> getCoffeeMachine(){
         return COFFEE_MACHINE_ITEM;
     }
@@ -57,7 +54,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> STEAMED_MILK = ITEMS.register(
             "steamed_milk",
-            () -> new Item(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
+            () -> new SteamedMilk(new Item.Properties().tab(ModCreativeTab.CAFFEINE_TAB))
     );
 
     public static final RegistryObject<Item> ICE = ITEMS.register(
@@ -98,10 +95,10 @@ public class ModItems {
             () -> new Espresso(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.HOT)
     );
 
-    public static final RegistryObject<Item> ICE_WATER = ITEMS.register(
-            "ice_water",
-            () -> new Drink(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.COLD)
-    );
+//    public static final RegistryObject<Item> ICE_WATER = ITEMS.register(
+//            "ice_water",
+//            () -> new Drink(1, 1, List.of(MobEffects.MOVEMENT_SPEED), 15, 0, DrinkState.COLD)
+//    );
 
     public static final RegistryObject<Item> AMERICANO = ITEMS.register(
             "americano",

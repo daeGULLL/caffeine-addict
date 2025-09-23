@@ -7,11 +7,11 @@
   ],
   "key": {
     "D": {
-      "item":"minecraft:white_terracotta"
+      "item":"minecraft:iron_nugget"
     }
   },
   "result": {
     "item": "caffeineaddictmode:shot_cup",
-    "count": 6
+    "count": 1
   }
 }

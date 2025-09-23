@@ -36,39 +36,44 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
         this.shotInv = shotInv;
         this.steamInv = steamInv;
         this.gaugeData = gaugeData;
-
+        //this.blit(poseStack, leftPos+36, topPos+138, 0, 126, 176, 124, 256, 250);
+        //
+        //
+        //        RenderSystem.setShaderTexture(0, GUI);
+        //
+        //        this.blit(poseStack, leftPos, topPos-34, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
         // Inputs
-        this.addSlot(new Slot(shotInv, 0, 104, 35));
-        this.addSlot(new Slot(shotInv, 1, 158, 35));
-        this.addSlot(new Slot(shotInv, 2, 212, 35));
+        this.addSlot(new Slot(shotInv, 0, 63, -6));
+        this.addSlot(new Slot(shotInv, 1, 116, -6));
+        this.addSlot(new Slot(shotInv, 2, 169, -6));
 
         // Outputs (read-only)
-        this.addSlot(new Slot(shotInv, 3, 104, 80) {
+        this.addSlot(new Slot(shotInv, 3, 63, 89) {
             @Override public int getMaxStackSize() {return COFFEE_MAX_STACK;}
         });
-        this.addSlot(new Slot(shotInv, 4, 158, 80) {
+        this.addSlot(new Slot(shotInv, 4, 116, 89) {
             @Override public int getMaxStackSize() {return COFFEE_MAX_STACK;}
         });
-        this.addSlot(new Slot(shotInv, 5, 212, 80) {
+        this.addSlot(new Slot(shotInv, 5, 169, 89) {
             @Override public int getMaxStackSize() {return COFFEE_MAX_STACK;}
         });
 
         // Steam Inputs
-        this.addSlot(new Slot(steamInv, 0, 50, 35));
-        this.addSlot(new Slot(steamInv, 1, 266, 35));
+        this.addSlot(new Slot(steamInv, 0, 10, -6));
+        this.addSlot(new Slot(steamInv, 1, 222, -6));
 
-        this.addSlot(new Slot(steamInv, 2, 50, 80) {
+        this.addSlot(new Slot(steamInv, 2, 10, 89) {
             @Override public int getMaxStackSize() {return MILK_MAX_STACK;}
         });
-        this.addSlot(new Slot(steamInv, 3, 266, 80) {
+        this.addSlot(new Slot(steamInv, 3, 222, 89) {
             @Override public int getMaxStackSize() {return MILK_MAX_STACK;}
         });
 
         addDataSlots(gaugeData);
-
+//35/80
         // Add player inventory slots (start at y=140 based on texture)
-        int startX = 8;
-        int startY = 96;
+        int startX = 44;
+        int startY = 148;
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
@@ -78,7 +83,7 @@ public class CoffeeMachineMenu extends AbstractContainerMenu {
 
 // Hotbar
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInv, col, startX + col * 18, startY + 58));
+            this.addSlot(new Slot(playerInv, col, startX + col * 18, startY + 57));
         }
 
     }

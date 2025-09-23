@@ -40,6 +40,14 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
         super(ModBlockEntities.COFFEE_MACHINE.get(), pos, state);
     }
 
+    protected Container getShotContainerForRemoval(){
+        return shotInventory;
+    }
+
+    protected Container getSteamContainerForRemoval(){
+        return steamInventory;
+    }
+
     public void setLastUsedBy(String playerName) {
         this.lastUsedBy = playerName;
     }
@@ -101,29 +109,34 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
         if(currentIndex>=SHOT_INV_SIZE){
             throw new RuntimeException("커피머신 슬롯 개수를 넘어갈 수 없습니다");
         }
-        // 커피콩 소비
-        shotInventory.removeItem(currentIndex, 1);
+        ItemStack input = shotInventory.getItem(currentIndex);
+        ItemStack output = shotInventory.getItem(currentIndex + (SHOT_INV_SIZE / 2));
 
-        int progress = gauges.get(currentIndex);
-        int distance = Math.abs(progress - 12);
-        // 에스프레소 추출
-        int quality = 0;
+        if (input.is(ModItems.COFFEE_POWDER.get()) && output.is(ModItems.SHOT_CUP.get())) {
+            // 커피콩 소비
+            shotInventory.removeItem(currentIndex, 1);
 
-        if (distance<=1) {
-            quality = 5; // 최고 등급
-        } else if (distance <= 3) {
-            quality = 4;
-        } else if (distance <= 6) {
-            quality = 3;
-        } else if (distance <= 9) {
-            quality = 2;
-        } else {
-            quality = 1; // 완전 멀어지면 최저 등급
+            int progress = gauges.get(currentIndex+1);
+            int distance = Math.abs(progress - 12);
+            // 에스프레소 추출
+            int quality = 0;
+
+            if (distance <= 1) {
+                quality = 5; // 최고 등급
+            } else if (distance <= 3) {
+                quality = 4;
+            } else if (distance <= 6) {
+                quality = 3;
+            } else if (distance <= 9) {
+                quality = 2;
+            } else {
+                quality = 1; // 완전 멀어지면 최저 등급
+            }
+
+            ItemStack espresso = new ItemStack(ModItems.ESPRESSO.get(), 1);
+            Espresso.withMeta(espresso, lastUsedBy, quality);
+            shotInventory.setItem(currentIndex + 3, espresso);
         }
-
-        ItemStack espresso = new ItemStack(ModItems.ESPRESSO.get(), 1);
-        Espresso.withMeta(espresso, lastUsedBy, quality);
-        shotInventory.setItem(currentIndex+3, espresso);
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
@@ -140,14 +153,14 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
             ItemStack input = shotInventory.getItem(i);
             ItemStack output = shotInventory.getItem(i + (SHOT_INV_SIZE / 2));
 
-            if (input.is(ModItems.GROUND_COFFEE.get()) && output.is(ModItems.SHOT_CUP.get())) {
-                handleProgress(level, i, gauges.get(i), () -> {
+            if (input.is(ModItems.COFFEE_POWDER.get()) && output.is(ModItems.SHOT_CUP.get())) {
+                handleProgress(level, i+1, gauges.get(i+1), () -> {
                     // 진행 중: 1초마다 사운드 재생
                     level.playSound(null, worldPosition, SoundEvents.BREWING_STAND_BREW,
                             SoundSource.BLOCKS, 1.0f, 1.0f);
                 });
             } else {
-                gauges.set(i, 0);
+                gauges.set(i+1, 0);
             }
         }
     }
@@ -156,7 +169,7 @@ public class CoffeeMachineBlockEntity extends BlockEntity implements MenuProvide
         for (int j = 0; j < STEAM_INV_SIZE / 2; j++) {
             ItemStack input = steamInventory.getItem(j);
             ItemStack output = steamInventory.getItem(j + (STEAM_INV_SIZE / 2));
-            int gaugeIndex = j + (SHOT_INV_SIZE / 2);
+            int gaugeIndex = j==0? 0 : ((SHOT_INV_SIZE+STEAM_INV_SIZE) / 2)-1;
 
             if (input.is(Items.MILK_BUCKET) &&
                     (output.is(ItemStack.EMPTY.getItem()) || output.is(ModItems.STEAMED_MILK.get()))) {
